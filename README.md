@@ -13,6 +13,17 @@ To run this project locally, you must have the following installed on your syste
 Because this project is separated into a **Backend** (Node.js) and a **Frontend** (React), you need to start both of them in two separate terminal windows.
 
 ### 1. Start the Backend Server
+1. change
+   ```const API_BASE_URL = '';
+   ```
+    to
+   ```const API_BASE_URL = 'http://localhost:5000';
+   ```
+   add path
+   ```frontend/src/components/MediaProcessor.jsx
+   ```
+
+### 2. Start the Backend Server
 1. Open a terminal and navigate to the backend folder:
    ```bash
    cd backend
@@ -27,7 +38,7 @@ Because this project is separated into a **Backend** (Node.js) and a **Frontend*
    ```
    *(You should see "Server is running on port 5000" in the terminal)*
 
-### 2. Start the Frontend Application
+### 3. Start the Frontend Application
 1. Open a **second, new terminal window** and navigate to the frontend folder:
    ```bash
    cd frontend
