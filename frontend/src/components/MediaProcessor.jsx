@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link2, DownloadCloud, Settings, Loader2, Music, Video, UploadCloud, File, Play, X, CheckCircle, AlertCircle, RefreshCw, Clock } from 'lucide-react';
 import axios from 'axios';
 
+const API_BASE_URL = 'https://download-converter.onrender.com';
+
 const calculateETA = (job) => {
   if (!job.progress || job.progress <= 0 || !job.createdAt) return null;
   const elapsedSeconds = (Date.now() - job.createdAt) / 1000;
@@ -18,9 +20,6 @@ const calculateETA = (job) => {
 };
 
 const MediaProcessor = () => {
-  // Centralized API Base URL config (Vite environment variables fallback to Render production URL)
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://download-converter.onrender.com';
-
   const [mode, setMode] = useState('link'); // 'link' or 'upload'
   const [url, setUrl] = useState('');
   const [file, setFile] = useState(null);
@@ -65,7 +64,7 @@ const MediaProcessor = () => {
     };
     
     return () => eventSource.close();
-  }, [API_BASE_URL]);
+  }, []);
 
   const fetchInfo = async () => {
     if (mode === 'link' && !url) {
@@ -77,7 +76,7 @@ const MediaProcessor = () => {
     setError('');
     
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/progress/api/download/info?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`${API_BASE_URL}/api/download/info?url=${encodeURIComponent(url)}`);
       setInfo(response.data);
     } catch (err) {
       setError('Failed to fetch media info. Ensure the URL is valid and accessible.');
@@ -107,7 +106,6 @@ const MediaProcessor = () => {
         const title = info ? info.title : 'URL Download';
         const duration = info ? info.duration : 0;
         const originalSize = info ? (info.filesize || info.filesize_approx || 0) : 0;
-        
         await axios.get(`${API_BASE_URL}/api/convert`, {
           params: { url, format, resolution, orientation, audioOnly: isAudioOnly, jobId, title, duration, originalSize }
         });
@@ -121,7 +119,7 @@ const MediaProcessor = () => {
         formData.append('jobId', jobId);
         formData.append('title', file.name);
         
-        await axios.post(`${API_BASE_URL}/api/progress/api/upload`, formData);
+        await axios.post(`${API_BASE_URL}/api/upload`, formData);
       }
       
       // Clear inputs for next job
@@ -137,16 +135,16 @@ const MediaProcessor = () => {
 
   const handleStopJob = async (jobId) => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/progress/api/jobs/${jobId}`);
+      await axios.delete(`${API_BASE_URL}/api/jobs/${jobId}`);
     } catch (err) {
       console.error("Failed to stop job", err);
     }
   };
 
   const handleDownloadCompleted = (job) => {
-    const downloadUrl = `${API_BASE_URL}/api/progress/api/download/${job.jobId}`;
+    const url = `${API_BASE_URL}/api/download/${job.jobId}`;
     const link = document.createElement('a');
-    link.href = downloadUrl;
+    link.href = url;
     
     const safeTitle = job.title ? job.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'download';
     link.setAttribute('download', `${safeTitle}.${job.format}`);
