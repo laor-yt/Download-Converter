@@ -39,7 +39,7 @@ const MediaProcessor = () => {
 
   // Initialize SSE and fetch initial jobs
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:5000/api/progress');
+    const eventSource = new EventSource('https://download-converter.onrender.com/api/progress');
     
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
