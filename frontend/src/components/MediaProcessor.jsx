@@ -18,6 +18,9 @@ const calculateETA = (job) => {
 };
 
 const MediaProcessor = () => {
+  // Centralized API Base URL config (Vite environment variables fallback to Render production URL)
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://download-converter.onrender.com';
+
   const [mode, setMode] = useState('link'); // 'link' or 'upload'
   const [url, setUrl] = useState('');
   const [file, setFile] = useState(null);
@@ -39,7 +42,7 @@ const MediaProcessor = () => {
 
   // Initialize SSE and fetch initial jobs
   useEffect(() => {
-    const eventSource = new EventSource('https://download-converter.onrender.com/api/progress');
+    const eventSource = new EventSource(`${API_BASE_URL}/api/progress`);
     
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -62,7 +65,7 @@ const MediaProcessor = () => {
     };
     
     return () => eventSource.close();
-  }, []);
+  }, [API_BASE_URL]);
 
   const fetchInfo = async () => {
     if (mode === 'link' && !url) {
@@ -74,7 +77,7 @@ const MediaProcessor = () => {
     setError('');
     
     try {
-      const response = await axios.get(`https://download-converter.onrender.com/api/progress/api/download/info?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`${API_BASE_URL}/api/progress/api/download/info?url=${encodeURIComponent(url)}`);
       setInfo(response.data);
     } catch (err) {
       setError('Failed to fetch media info. Ensure the URL is valid and accessible.');
@@ -104,7 +107,8 @@ const MediaProcessor = () => {
         const title = info ? info.title : 'URL Download';
         const duration = info ? info.duration : 0;
         const originalSize = info ? (info.filesize || info.filesize_approx || 0) : 0;
-        await axios.get(`http://localhost:5000/api/convert`, {
+        
+        await axios.get(`${API_BASE_URL}/api/convert`, {
           params: { url, format, resolution, orientation, audioOnly: isAudioOnly, jobId, title, duration, originalSize }
         });
       } else if (mode === 'upload' && file) {
@@ -117,7 +121,7 @@ const MediaProcessor = () => {
         formData.append('jobId', jobId);
         formData.append('title', file.name);
         
-        await axios.post('https://download-converter.onrender.com/api/progress/api/upload', formData);
+        await axios.post(`${API_BASE_URL}/api/progress/api/upload`, formData);
       }
       
       // Clear inputs for next job
@@ -133,16 +137,16 @@ const MediaProcessor = () => {
 
   const handleStopJob = async (jobId) => {
     try {
-      await axios.delete(`https://download-converter.onrender.com/api/progress/api/jobs/${jobId}`);
+      await axios.delete(`${API_BASE_URL}/api/progress/api/jobs/${jobId}`);
     } catch (err) {
       console.error("Failed to stop job", err);
     }
   };
 
   const handleDownloadCompleted = (job) => {
-    const url = `https://download-converter.onrender.com/api/progress/api/download/${job.jobId}`;
+    const downloadUrl = `${API_BASE_URL}/api/progress/api/download/${job.jobId}`;
     const link = document.createElement('a');
-    link.href = url;
+    link.href = downloadUrl;
     
     const safeTitle = job.title ? job.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'download';
     link.setAttribute('download', `${safeTitle}.${job.format}`);
