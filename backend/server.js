@@ -70,6 +70,21 @@ app.get('/api/download/:jobId', (req, res) => {
     });
 });
 
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>✅ Download Converter Backend is Running</h1>
+    <p>API is working 🎉</p>
+    <p>Try: <a href="/api/health">/api/health</a></p>
+  `);
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Server is working"
+  });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
