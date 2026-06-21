@@ -7,6 +7,7 @@ const convertRoute = require('./routes/convert');
 const uploadRoute = require('./routes/upload');
 const jobManager = require('./jobManager');
 const { exec } = require('child_process');
+const path = require('path');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
