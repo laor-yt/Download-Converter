@@ -74,7 +74,7 @@ const MediaProcessor = () => {
     setError('');
     
     try {
-      const response = await axios.get(`http://localhost:5000/api/download/info?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`https://download-converter.onrender.com/api/progress/api/download/info?url=${encodeURIComponent(url)}`);
       setInfo(response.data);
     } catch (err) {
       setError('Failed to fetch media info. Ensure the URL is valid and accessible.');
@@ -117,7 +117,7 @@ const MediaProcessor = () => {
         formData.append('jobId', jobId);
         formData.append('title', file.name);
         
-        await axios.post('http://localhost:5000/api/upload', formData);
+        await axios.post('https://download-converter.onrender.com/api/progress/api/upload', formData);
       }
       
       // Clear inputs for next job
@@ -133,14 +133,14 @@ const MediaProcessor = () => {
 
   const handleStopJob = async (jobId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/jobs/${jobId}`);
+      await axios.delete(`https://download-converter.onrender.com/api/progress/api/jobs/${jobId}`);
     } catch (err) {
       console.error("Failed to stop job", err);
     }
   };
 
   const handleDownloadCompleted = (job) => {
-    const url = `http://localhost:5000/api/download/${job.jobId}`;
+    const url = `https://download-converter.onrender.com/api/progress/api/download/${job.jobId}`;
     const link = document.createElement('a');
     link.href = url;
     
