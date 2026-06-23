@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link2, DownloadCloud, Settings, Loader2, Music, Video, UploadCloud, File, Play, X, CheckCircle, AlertCircle, RefreshCw, Clock } from 'lucide-react';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:10000';
 
 const calculateETA = (job) => {
   if (!job.progress || job.progress <= 0 || !job.createdAt) return null;
