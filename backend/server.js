@@ -7,7 +7,6 @@ const convertRoute = require('./routes/convert');
 const uploadRoute = require('./routes/upload');
 const jobManager = require('./jobManager');
 const { exec } = require('child_process');
-const path = require('path');
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
@@ -71,13 +70,6 @@ app.get('/api/download/:jobId', (req, res) => {
     });
 });
 
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
-
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
